@@ -1,7 +1,9 @@
 
 
-# 데이터베이스 사전 세팅
+# 1. 데이터베이스 사전 세팅
 
+#### DB 접속 및 버전 확인
+```bash
 C:\Users\gonna>sqlplus / as sysdba
 
 SQL*Plus: Release 21.0.0.0.0 - Production on 일 1월 18 23:14:07 2026
@@ -13,30 +15,58 @@ Copyright (c) 1982, 2021, Oracle.  All rights reserved.
 다음에 접속됨:
 Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
 Version 21.3.0.0.0
+```
 
-PDB가 아닌 경우 전환
-'''bash
-SQL> show con_name;
+#### PDB 또는 CDB 여부 확인 후 PDB가 아닌 경우 PDB로 전환
+```bash
+SQL> SHOW CON_NAME;
 
 CON_NAME
 ------------------------------
 CDB$ROOT
+
+SQL> SELECT name, open_mode FROM v$pdbs;
+
+NAME
+--------------------------------------------------------------------------------
+OPEN_MODE
+--------------------
+PDB$SEED
+READ ONLY
+
+XEPDB1
+READ WRITE
+
+SQL> ALTER SESSION SET CONTAINER = XEPDB1;
+
+세션이 변경되었습니다.
+
+SQL> SHOW CON_NAME;
+
+CON_NAME
+------------------------------
+XEPDB1
+
 SQL> ALTER SESSION SET "_ORACLE_SCRIPT" = true;
 
 세션이 변경되었습니다.
-'''
+```
 
-스키마가 없는 경우 스키마 생성
-'''bash
+#### 스키마가 없는 경우 스키마 생성
+```bash
 SQL> CREATE USER ITPAPP IDENTIFIED BY "kdb1234!!";
 
 사용자가 생성되었습니다.
 
 SQL> GRANT CONNECT, RESOURCE, DBA TO ITPAPP;
-'''
+```
 
+#### dump 디렉토리 설정 및 권한 부여
+```bash
+SQL> SELECT directory_name, directory_path FROM dba_directories WHERE directory_name = 'MY_DUMP_DIR';
 
-'''bash
+선택된 레코드가 없습니다.
+
 SQL> CREATE OR REPLACE DIRECTORY my_dump_dir AS 'C:\it\it_database';
 
 디렉토리가 생성되었습니다.
@@ -53,10 +83,10 @@ C:\it\it_database
 SQL> GRANT READ, WRITE ON DIRECTORY MY_DUMP_DIR TO ITPAPP;
 
 권한이 부여되었습니다.
-'''
+```
 
-# 가져오기
+# 2. 가져오기
 C:\it\it_database>impdp parfile=import.par
 
-# 내보내기
+# 3. 내보내기
 C:\it\it_database>expdp parfile=export.par
