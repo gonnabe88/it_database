@@ -1,6 +1,9 @@
 
-
 # 1. 데이터베이스 사전 세팅
+
+#### DB 설치
+Oracle Database 21c Express Edition
+https://www.oracle.com/kr/database/technologies/xe-downloads.html
 
 #### DB 접속 및 버전 확인
 ```bash
